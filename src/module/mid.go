@@ -80,7 +80,6 @@ func SplitMID(mid MID) ([]string, error) {
 	return []string{letter, snStr, addr}, nil
 }
 
-// legalSN 用于判断序列号的合法性。
 func legalSN(snStr string) bool {
 	_, err := strconv.ParseUint(snStr, 10, 64)
 	if err != nil {

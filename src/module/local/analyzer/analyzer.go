@@ -78,7 +78,6 @@ func (analyzer *myAnalyzer) Analyze(
 	log.Printf("Parse the response (URL: %s, depth: %d)... \n",
 		reqURL, respDepth)
 
-	// 解析HTTP响应。
 	if httpResp.Body != nil {
 		defer httpResp.Body.Close()
 	}

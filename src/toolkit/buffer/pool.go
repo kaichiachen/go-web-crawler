@@ -28,12 +28,7 @@ type myPool struct {
 	rwlock          sync.RWMutex
 }
 
-// NewPool 用于创建一个数据缓冲池。
-// 参数bufferCap代表池内缓冲器的统一容量。
-// 参数maxBufferNumber代表池中最多包含的缓冲器的数量。
-func NewPool(
-	bufferCap uint32,
-	maxBufferNumber uint32) (Pool, error) {
+func NewPool(bufferCap uint32, maxBufferNumber uint32) (Pool, error) {
 	if bufferCap == 0 {
 		errMsg := fmt.Sprintf("illegal buffer cap for buffer pool: %d", bufferCap)
 		return nil, errs.NewIllegalParameterError(errMsg)
@@ -108,11 +103,9 @@ func (pool *myPool) putData(
 	if err != nil {
 		return
 	}
-	// 若因缓冲器已满而未放入数据就递增计数。
 	(*count)++
-	// 如果尝试向缓冲器放入数据的失败次数达到阈值，
-	// 并且池中缓冲器的数量未达到最大值，
-	// 那么就尝试创建一个新的缓冲器，先放入数据再把它放入池。
+
+	// create buffer
 	if *count >= maxCount &&
 		pool.BufferNumber() < pool.MaxBufferNumber() {
 		pool.rwlock.Lock()
@@ -155,9 +148,7 @@ func (pool *myPool) getData(
 		return nil, ErrClosedBufferPool
 	}
 	defer func() {
-		// 如果尝试从缓冲器获取数据的失败次数达到阈值，
-		// 同时当前缓冲器已空且池中缓冲器的数量大于1，
-		// 那么就直接关掉当前缓冲器，并不归还给池。
+		// close buffer
 		if *count >= maxCount &&
 			buf.Len() == 0 &&
 			pool.BufferNumber() > 1 {
@@ -183,7 +174,7 @@ func (pool *myPool) getData(
 	if err != nil {
 		return
 	}
-	// 若因缓冲器已空未取出数据就递增计数。
+	// if datum is nil, count plus 1
 	(*count)++
 	return
 }

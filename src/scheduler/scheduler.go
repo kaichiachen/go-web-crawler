@@ -166,7 +166,7 @@ func (sched *myScheduler) Start(firstHTTPReq *http.Request) (err error) {
 	sched.analyze()
 	sched.pick()
 	log.Println("Scheduler has been started.")
-	// 放入第一个请求。
+
 	firstReq := module.NewRequest(firstHTTPReq, 0)
 	sched.sendReq(firstReq)
 	return nil
